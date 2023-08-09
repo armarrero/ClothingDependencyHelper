@@ -74,27 +74,27 @@ namespace ClothersDependencyHelper.Services
             {
                 //get the clothing item and its dependency
                 var dependency = input[i, 0];
-                var dependant = input[i, 1];
+                var dependent = input[i, 1];
 
-                CheckForEmptyInputsOrSelfDependency(dependency, dependant);
+                CheckForEmptyInputsOrSelfDependency(dependency, dependent);
 
                 //add clothing items and their nodes to the lookup if they don't already exist
                 if (!clothingNodeLookup.ContainsKey(dependency))
                     clothingNodeLookup.Add(dependency, new ClothingNode() { ClothingItem = dependency });
 
-                if (!clothingNodeLookup.ContainsKey(dependant))
-                    clothingNodeLookup.Add(dependant, new ClothingNode() { ClothingItem = dependant });
+                if (!clothingNodeLookup.ContainsKey(dependent))
+                    clothingNodeLookup.Add(dependent, new ClothingNode() { ClothingItem = dependent });
 
                 //get the nodes and make sure they were able to be obtained
-                ClothingNode dependencyNode, dependantNode;
+                ClothingNode dependencyNode, dependentNode;
                 if (!clothingNodeLookup.TryGetValue(dependency, out dependencyNode))
                     throw new Exception($"An error occured trying to create clothing item {dependency}.");
 
-                if (!clothingNodeLookup.TryGetValue(dependant, out dependantNode))
-                    throw new Exception($"An error occured trying to create clothing item {dependant}.");
+                if (!clothingNodeLookup.TryGetValue(dependent, out dependentNode))
+                    throw new Exception($"An error occured trying to create clothing item {dependent}.");
 
-                dependencyNode.Dependents.Add(dependantNode);
-                dependantNode.Dependencies.Add(dependencyNode);
+                dependencyNode.Dependents.Add(dependentNode);
+                dependentNode.Dependencies.Add(dependencyNode);
             }
 
             return clothingNodeLookup;
@@ -105,13 +105,13 @@ namespace ClothersDependencyHelper.Services
         /// This can be refactored to return a boolean and give us the option to throw
         /// or skip the input instead
         /// </summary>
-        private void CheckForEmptyInputsOrSelfDependency(string dependency, string dependant)
+        private void CheckForEmptyInputsOrSelfDependency(string dependency, string dependent)
         {
-            if (String.IsNullOrEmpty(dependency) || String.IsNullOrEmpty(dependant))
-                throw new ArgumentException($"Empty values found on entry {dependency},{dependant}.");
+            if (String.IsNullOrEmpty(dependency) || String.IsNullOrEmpty(dependent))
+                throw new ArgumentException($"Empty values found on entry {dependency},{dependent}.");
 
-            if (dependency.Equals(dependant, StringComparison.InvariantCultureIgnoreCase))
-                throw new CircularDependencyException($"Clothing Item {dependant} cannot be dependent on itself");
+            if (dependency.Equals(dependent, StringComparison.InvariantCultureIgnoreCase))
+                throw new CircularDependencyException($"Clothing Item {dependent} cannot be dependent on itself");
         }
     }
 }
