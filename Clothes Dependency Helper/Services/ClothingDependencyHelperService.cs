@@ -17,6 +17,7 @@ namespace ClothersDependencyHelper.Services
         {
             var orderedClothingItemsList = new List<string>();
             var groupedItems = new List<string>();
+            var visitedNodes = new HashSet<ClothingNode>();
 
             foreach (var rootNode in queue)
             {
@@ -26,6 +27,13 @@ namespace ClothersDependencyHelper.Services
             while (queue.Count() > 0)
             {
                 var currentNode = queue.Dequeue();
+                if(visitedNodes.Contains(currentNode)) 
+                {
+                    throw new CircularDependencyException($"Circular dependencies found with clothing item: {currentNode.ClothingItem}");
+                }
+
+                visitedNodes.Add(currentNode);
+
                 if (groupedItems.Any())
                 {
                     orderedClothingItemsList.Add(string.Join(", ", groupedItems.OrderBy(item => item, StringComparer.OrdinalIgnoreCase)));
